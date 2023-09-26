@@ -1,46 +1,116 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whoami-lab-v1
+  name: todolist-web-v1
   labels:
     kubernetes.azureauthority.in: deployments
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: whoami-lab
+      app: todolist-web
       version: v1
   template:
     metadata:
       labels:
-        app: whoami-lab
+        app: todolist-web
         version: v1
     spec:
       containers:
         - name: app
-          image: sixeyed/whoami:21.04
+          image: zhengyugan/todo-list-web:1.0
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whoami-lab-v2
+  name: todo-list-save-handler-v2
   labels:
     kubernetes.azureauthority.in: deployments
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: whoami-lab
+      app: todo-list-save-handler
       version: v2
   template:
     metadata:
       labels:
-        app: whoami-lab
+        app: todo-list-save-handler
         version: v2
     spec:
       containers:
         - name: app
-          image: sixeyed/whoami:21.04
+          image: zhengyugan/todo-list-save-handler:1.0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-queue-v2
+  labels:
+    kubernetes.azureauthority.in: deployments
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-queue
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: todo-queue
+        version: v2
+    spec:
+      containers:
+        - name: app
+          image: redis:6.2-alpine
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-db-v2
+  labels:
+    kubernetes.azureauthority.in: deployments
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-db
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: todo-db
+        version: v2
+    spec:
+      containers:
+        - name: app
+          image: mcr.microsoft.com/azure-sql-edge
           env:
-            - name: WHOAMI_MODE
-              value: q
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Developer
+            - name: MSSQL_SA_PASSWORD
+              value: AzureD3v!!!
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-storage-v2
+  labels:
+    kubernetes.azureauthority.in: deployments
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo-storage
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: todo-storage
+        version: v2
+    spec:
+      containers:
+        - name: app
+          image: mcr.microsoft.com/azure-storage/azurite
