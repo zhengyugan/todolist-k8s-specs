@@ -6,14 +6,14 @@ metadata:
     kompose.version: 1.30.0 (9d8dcb518)
   creationTimestamp: null
   labels:
-    io.kompose.service: todo-list-save-handler
-  name: todo-list-save-handler
+    io.kompose.service: todo-db
+  name: todo-db
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: todo-list-save-handler
+      io.kompose.service: todo-db
   strategy: {}
   template:
     metadata:
@@ -23,19 +23,22 @@ spec:
       creationTimestamp: null
       labels:
         io.kompose.network/composedfiles-default: "true"
-        io.kompose.service: todo-list-save-handler
+        io.kompose.service: todo-db
     spec:
       containers:
-        - image: zhengyugan/todo-list-save-handler:1.0
-          name: todo-list-save-handler
+        - env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: Developer
+            - name: MSSQL_SA_PASSWORD
+              value: AzureD3v!!!
+          image: mcr.microsoft.com/azure-sql-edge
+          name: todo-db
+          ports:
+            - containerPort: 1433
+              hostPort: 1433
+              protocol: TCP
           resources: {}
-          volumeMounts:
-            - mountPath: /app/config
-              name: appsettings
-              readOnly: true
       restartPolicy: Always
-      volumes:
-        - name: appsettings
-          configMap:
-            name: appsettings
 status: {}
