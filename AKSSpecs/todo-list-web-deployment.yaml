@@ -40,6 +40,9 @@ spec:
       restartPolicy: Always
       volumes:
         - name: appsettings
-          configMap:
-            name: appsettings
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: todolist-keyvault
 status: {}
